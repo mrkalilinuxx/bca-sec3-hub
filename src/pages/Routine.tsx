@@ -4,16 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData, ScheduleItem } from '@/contexts/DataContext';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Pending Scheduled Class Time', 'Notice'];
 
 const Routine = () => {
   const { isAuthenticated } = useAuth();
-  const { schedule, timeSlots, updateScheduleItem, updateTimeSlot, addTimeSlot, removeTimeSlot } = useData();
+  const { schedule, timeSlots, subjects, updateScheduleItem, updateTimeSlot, addTimeSlot, removeTimeSlot } = useData();
   const { toast } = useToast();
   
   const [editingCell, setEditingCell] = useState<string | null>(null);
@@ -200,43 +202,67 @@ const Routine = () => {
 
         {/* Edit Dialog */}
         <Dialog open={!!editingCell} onOpenChange={() => setEditingCell(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Schedule Item</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Subject/Activity Name</label>
-                <Input
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  placeholder="Enter subject or activity name"
-                />
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Schedule Item</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Subject/Activity</label>
+                  <div className="space-y-2">
+                    <Select
+                      value={editForm.name}
+                      onValueChange={(value) => setEditForm({ ...editForm, name: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subjects.map(subject => (
+                          <SelectItem key={subject.id} value={subject.name}>
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="h-3 w-3 rounded-full"
+                                style={{ backgroundColor: subject.color }}
+                              />
+                              {subject.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      value={editForm.name}
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      placeholder="Or enter custom name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Details (Optional)</label>
+                  <Textarea
+                    value={editForm.details}
+                    onChange={(e) => setEditForm({ ...editForm, details: e.target.value })}
+                    placeholder="Room number, instructor, notes..."
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={() => setEditingCell(null)}>
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" onClick={handleDeleteCell}>
+                    Delete
+                  </Button>
+                  <Button onClick={handleSaveCell}>
+                    Save
+                  </Button>
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Details (Optional)</label>
-                <Textarea
-                  value={editForm.details}
-                  onChange={(e) => setEditForm({ ...editForm, details: e.target.value })}
-                  placeholder="Room number, instructor, notes..."
-                  rows={3}
-                />
-              </div>
-              <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => setEditingCell(null)}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={handleDeleteCell}>
-                  Delete
-                </Button>
-                <Button onClick={handleSaveCell}>
-                  Save
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
+            </DialogContent>
         </Dialog>
       </div>
+      <Footer />
     </div>
   );
 };

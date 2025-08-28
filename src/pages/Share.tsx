@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 const Share = () => {
   const { isAuthenticated } = useAuth();
@@ -107,10 +108,10 @@ ${isAuthenticated ? '🔒 View-only access - No editing permissions' : ''}
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="flex-1 max-w-4xl mx-auto px-4 py-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Share & Export</h1>
           <p className="text-muted-foreground">Share your content and export data for backup</p>

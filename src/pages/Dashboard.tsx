@@ -1,161 +1,177 @@
-import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Calendar, BookOpen, Share, Lock, Unlock, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Calendar, FileText, Share, BookOpen, Clock, Users, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { useData } from '@/contexts/DataContext';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import Logo from '@/components/Logo';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  const [password, setPassword] = useState('');
-  const { isAuthenticated, authenticate } = useAuth();
-  const { toast } = useToast();
-  const [searchParams] = useSearchParams();
-  const viewOnly = searchParams.get('view') === 'true';
+  const { isAuthenticated } = useAuth();
+  const { schedule, subjectFiles, timeSlots, subjects } = useData();
 
-  const handleAuth = () => {
-    if (authenticate(password)) {
-      toast({
-        title: "Authentication Successful",
-        description: "You now have editing access to all features.",
-      });
-      setPassword('');
-    } else {
-      toast({
-        title: "Authentication Failed", 
-        description: "Incorrect password. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const copyViewLink = () => {
-    const viewLink = `${window.location.origin}?view=true`;
-    navigator.clipboard.writeText(viewLink);
-    toast({
-      title: "Link Copied",
-      description: "View-only link copied to clipboard.",
-    });
-  };
-
-  const features = [
-    {
-      title: 'Weekly Routine',
-      description: 'Manage your class schedule with editable time slots',
-      icon: Calendar,
-      path: '/routine',
-      color: 'from-blue-500 to-purple-600'
-    },
-    {
-      title: 'Subject Files',
-      description: 'Upload and organize files for 10 subjects',
-      icon: BookOpen,
-      path: '/subjects',
-      color: 'from-green-500 to-blue-500'
-    },
-    {
-      title: 'Share & Download',
-      description: 'Share view-only access and download files',
-      icon: Share,
-      path: '/share',
-      color: 'from-purple-500 to-pink-500'
-    }
-  ];
+  const totalClasses = Object.keys(schedule).length;
+  const totalFiles = subjectFiles.length;
+  const totalTimeSlots = timeSlots.length;
+  const totalSubjects = subjects.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="flex-1 max-w-6xl mx-auto px-4 py-6">
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-            BCA Section 3 Management
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Professional routine and subject file management system
+          <div className="flex items-center justify-center mb-4">
+            <Logo size="lg" />
+          </div>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Organize your class schedules, manage subject files, and share your routine with classmates. 
+            Everything is stored locally in your browser for privacy and convenience.
           </p>
         </div>
 
-        {!isAuthenticated && !viewOnly && (
-          <Card className="mb-8 bg-gradient-card border-border shadow-professional">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lock className="h-5 w-5" />
-                Administrative Access
-              </CardTitle>
-              <CardDescription>
-                Enter the admin password to unlock editing capabilities
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  type="password"
-                  placeholder="Enter admin password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAuth()}
-                  className="bg-input border-border"
-                />
-                <Button onClick={handleAuth} className="bg-primary hover:bg-primary-hover">
-                  <Unlock className="h-4 w-4 mr-2" />
-                  Unlock
-                </Button>
-              </div>
-              
-              <div className="bg-muted rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">View-Only Access:</span>
-                  <Button variant="outline" size="sm" onClick={copyViewLink}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Link
-                  </Button>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-gradient-card border-border shadow-professional">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Subjects</p>
+                  <p className="text-2xl font-bold">{totalSubjects}</p>
                 </div>
-                <code className="text-xs text-muted-foreground break-all">
-                  {window.location.origin}?view=true
-                </code>
+                <BookOpen className="h-8 w-8 text-primary" />
               </div>
             </CardContent>
           </Card>
-        )}
 
-        {(isAuthenticated || viewOnly) && (
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-full text-sm font-medium">
-              <Unlock className="h-4 w-4" />
-              {viewOnly ? 'View-Only Access' : 'Full Administrative Access'}
-            </div>
-          </div>
-        )}
+          <Card className="bg-gradient-card border-border shadow-professional">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Files</p>
+                  <p className="text-2xl font-bold">{totalFiles}</p>
+                </div>
+                <FileText className="h-8 w-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <Link key={index} to={feature.path}>
-              <Card className="h-full bg-gradient-card border-border hover:shadow-glow transition-all duration-300 group cursor-pointer">
-                <CardHeader>
-                  <div className={`h-12 w-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    <feature.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle className="group-hover:text-primary transition-colors">
-                    {feature.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          ))}
+          <Card className="bg-gradient-card border-border shadow-professional">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Scheduled Classes</p>
+                  <p className="text-2xl font-bold">{totalClasses}</p>
+                </div>
+                <Clock className="h-8 w-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card border-border shadow-professional">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Time Slots</p>
+                  <p className="text-2xl font-bold">{totalTimeSlots}</p>
+                </div>
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            Built for Bachelor of Computer Applications - Section 3
-          </p>
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-card border-border shadow-professional hover:shadow-elegant transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Weekly Routine
+              </CardTitle>
+              <CardDescription>
+                View and edit your class schedule for the week
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/routine">
+                <Button className="w-full">
+                  Manage Routine
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card border-border shadow-professional hover:shadow-elegant transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                Subject Files
+              </CardTitle>
+              <CardDescription>
+                Upload and organize files for each subject
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/subjects">
+                <Button className="w-full">
+                  Manage Files
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card border-border shadow-professional hover:shadow-elegant transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Analytics
+              </CardTitle>
+              <CardDescription>
+                View insights and analytics for subjects
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/analytics">
+                <Button className="w-full">
+                  View Analytics
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card border-border shadow-professional hover:shadow-elegant transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share className="h-5 w-5 text-primary" />
+                Share & Export
+              </CardTitle>
+              <CardDescription>
+                Share your routine or export as PDF
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/share">
+                <Button className="w-full">
+                  Share Routine
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
+
+        {!isAuthenticated && (
+          <Card className="bg-muted/50 border-border text-center p-6">
+            <p className="text-muted-foreground">
+              🔒 To edit the routine and upload files, please authenticate using the admin password: <strong>ssladmin</strong>
+            </p>
+          </Card>
+        )}
       </div>
+      <Footer />
     </div>
   );
 };
