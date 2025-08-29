@@ -8,6 +8,7 @@ import { DataProvider } from "@/contexts/DataContext";
 import Dashboard from "./pages/Dashboard";
 import Routine from "./pages/Routine";
 import Subjects from "./pages/Subjects";
+import Analytics from "./pages/Analytics";
 import Share from "./pages/Share";
 import NotFound from "./pages/NotFound";
 
