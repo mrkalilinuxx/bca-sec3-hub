@@ -6,6 +6,8 @@ import { useData } from '@/contexts/DataContext';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import Logo from '@/components/Logo';
+import EditableContent from '@/components/EditableContent';
+import FileUpload from '@/components/FileUpload';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -27,10 +29,15 @@ const Dashboard = () => {
           <div className="flex items-center justify-center mb-4">
             <Logo size="lg" />
           </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Organize your class schedules, manage subject files, and share your routine with classmates. 
-            Everything is stored locally in your browser for privacy and convenience.
-          </p>
+          <div className="max-w-2xl mx-auto">
+            <EditableContent 
+              section="dashboard_description"
+              defaultContent="Organize your class schedules, manage subject files, and share your routine with classmates. Everything is stored securely in the cloud for real-time collaboration."
+              type="textarea"
+              className="text-muted-foreground text-center"
+              placeholder="Enter dashboard description..."
+            />
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -84,16 +91,29 @@ const Dashboard = () => {
           </Card>
         </div>
 
+        {/* File Upload Section */}
+        <div className="mb-8">
+          <FileUpload />
+        </div>
+
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-card border-border shadow-professional hover:shadow-elegant transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                Weekly Routine
+                <EditableContent 
+                  section="routine_card_title"
+                  defaultContent="Weekly Routine"
+                  placeholder="Card title..."
+                />
               </CardTitle>
               <CardDescription>
-                View and edit your class schedule for the week
+                <EditableContent 
+                  section="routine_card_description"
+                  defaultContent="View and edit your class schedule for the week"
+                  placeholder="Card description..."
+                />
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -109,10 +129,18 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
-                Subject Files
+                <EditableContent 
+                  section="files_card_title"
+                  defaultContent="Subject Files"
+                  placeholder="Card title..."
+                />
               </CardTitle>
               <CardDescription>
-                Upload and organize files for each subject
+                <EditableContent 
+                  section="files_card_description"
+                  defaultContent="Upload and organize files for each subject"
+                  placeholder="Card description..."
+                />
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -128,10 +156,18 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-primary" />
-                Analytics
+                <EditableContent 
+                  section="analytics_card_title"
+                  defaultContent="Analytics"
+                  placeholder="Card title..."
+                />
               </CardTitle>
               <CardDescription>
-                View insights and analytics for subjects
+                <EditableContent 
+                  section="analytics_card_description"
+                  defaultContent="View insights and analytics for subjects"
+                  placeholder="Card description..."
+                />
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -147,10 +183,18 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Share className="h-5 w-5 text-primary" />
-                Share & Export
+                <EditableContent 
+                  section="share_card_title"
+                  defaultContent="Share & Export"
+                  placeholder="Card title..."
+                />
               </CardTitle>
               <CardDescription>
-                Share your routine or export as PDF
+                <EditableContent 
+                  section="share_card_description"
+                  defaultContent="Share your routine or export data"
+                  placeholder="Card description..."
+                />
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -165,9 +209,13 @@ const Dashboard = () => {
 
         {!isAuthenticated && (
           <Card className="bg-muted/50 border-border text-center p-6">
-            <p className="text-muted-foreground">
-              🔒 To edit the routine and upload files, please authenticate using the admin password: <strong>ssladmin</strong>
-            </p>
+            <EditableContent 
+              section="auth_notice"
+              defaultContent="🔒 To edit content and upload files, please log in with your admin credentials using the login button in the top navigation."
+              type="textarea"
+              className="text-muted-foreground"
+              placeholder="Authentication notice..."
+            />
           </Card>
         )}
       </div>
